@@ -1,0 +1,102 @@
+\documentclass[12pt, letterpaper]{article}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% STANDARD PACKAGES
+%% ════════════════════════════════════════════════════════════════════════════
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{csquotes}         % Smart quotation marks
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}         % Line spacing: \doublespacing or \onehalfspacing
+\usepackage[bottom,flushmargin]{footmisc} % Footnotes pinned to bottom, flush left
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = black,
+  citecolor  = black,
+  urlcolor   = blue,
+}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% LEGAL CITATION PACKAGE (legalcite.sty)
+%% ════════════════════════════════════════════════════════════════════════════
+%%
+%% Implements the Canadian Guide to Uniform Legal Citation (McGill Guide),
+%% 9th edition.
+%%
+%% HOW IT WORKS
+%% ─────────────
+%% 1. Declare all sources in the preamble (below).
+%% 2. In the body, cite with \legal{key} or \legal[pinpoint]{key}.
+%%    Each call inserts a footnote that is automatically formatted as:
+%%      • Full citation + [Short]  — first use of that key
+%%      • Short at pinpoint        — subsequent non-consecutive use
+%%      • Ibid  (or Ibid at …)    — consecutive same-key use
+%%    Case short forms are automatically italicised (McGill Guide §3.5).
+%% 3. Use \legalname{key} or \legalshort{key} to print the source name
+%%    in running text without generating a footnote.
+%% 4. Call \printlegalbibliography at the end to print the Table of Authorities
+%%    organised as: Legislation / Case Law / Monographs / Articles.
+%%
+%% PINPOINT SYNTAX (McGill Guide §1.3)
+%%   Cases     → para 32 | paras 27-31 | paras 18, 23
+%%   Books     → p 42    | pp 148-155  | pp 214, 218
+%%   Articles  → p 5     | pp 5-7
+
+\usepackage{legalcite}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% SOURCE DECLARATIONS
+%% ════════════════════════════════════════════════════════════════════════════
+%% All sources are declared in sources.tex (edit that file to add/change sources).
+
+\input{sources}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% DOCUMENT
+%% ════════════════════════════════════════════════════════════════════════════
+
+\begin{document}
+
+\title{Competition Law as a lever for AI regulation}
+\author{David Lim}
+\date{\today}
+\maketitle
+\thispagestyle{empty}  % suppress page number on title page
+\newpage
+
+\onehalfspacing  % remove or replace with \doublespacing as required
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% Abstract
+%% ════════════════════════════════════════════════════════════════════════════
+
+\begin{abstract}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum.
+\end{abstract}
+
+\newpage
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% BODY
+%% Edit body.tex to write your paper. Sources go in sources.tex.
+%% ════════════════════════════════════════════════════════════════════════════
+
+\input{body}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% BIBLIOGRAPHY / TABLE OF AUTHORITIES
+%% Prints: Legislation | Case Law | Monographs | Articles
+%% ════════════════════════════════════════════════════════════════════════════
+\newpage
+\printlegalbibliography
+
+\end{document}

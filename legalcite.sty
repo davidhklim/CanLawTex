@@ -1,0 +1,396 @@
+%%
+%% legalcite.sty — Canadian McGill Legal Citation Package
+%%
+%% Implements footnote-based legal citations following the Canadian Guide to
+%% Uniform Legal Citation (McGill Guide), 9th edition, with automatic ibid
+%% tracking and a formatted bibliography (Table of Authorities).
+%%
+%% ════════════════════════════════════════════════════════════════════════════
+%% QUICK REFERENCE
+%% ════════════════════════════════════════════════════════════════════════════
+%%
+%% SOURCE DECLARATIONS (preamble):
+%%
+%%   \declarecase{key}{Full Case Name}{Year Court Docket}{Short}
+%%   Example:
+%%     \declarecase{york}
+%%       {York University v Canadian Copyright Licensing Agency (Access Copyright)}
+%%       {2021 SCC 32}{York}
+%%   Note: Short is rendered in italics automatically (McGill Guide §3.5).
+%%
+%%   \declarebook{key}{FnAuthor}{BibAuthor}{Title}{Edition}{Publisher}{Year}{Short}
+%%   Example:
+%%     \declarebook{ziff}{B. Ziff}{Ziff, B.}
+%%       {Principles of Property Law}{5th ed}{Carswell}{2010}{Ziff}
+%%     Note: Use {} for Edition if it is the first edition.
+%%           FnAuthor  = citation-format  author, e.g., "B. Ziff"
+%%           BibAuthor = bibliography-format author, e.g., "Ziff, B."
+%%             (McGill Guide requires surname-first for individual authors in bibliographies)
+%%
+%%   \declarearticle{key}{FnAuthor}{BibAuthor}{Title}{Year}{Vol:Issue}{Journal}[FirstPage]{Short}
+%%   Example:
+%%     \declarearticle{debeer}{J. de Beer}{de Beer, J.}
+%%       {Canada's Copyright Tariff-Setting Process}{2016}{63:3}
+%%       {Journal of the Copyright Society of the U.S.A.}[399]{de Beer}
+%%   Note: [FirstPage] is optional but required by McGill Guide §6.1.
+%%
+%%   \declarelegislation{key}{Full Act Title}{Statute Citation}
+%%   Example:
+%%     \declarelegislation{copyrightact}{Copyright Act}{RSC 1985, c C-42}
+%%
+%% ════════════════════════════════════════════════════════════════════════════
+%%
+%% CITATION COMMANDS (body — each produces a footnote):
+%%
+%%   \legal{key}            First use → full citation + [Short]
+%%                          Subsequent non-consecutive → short form
+%%                          Consecutive same source   → Ibid
+%%   \legal[pinpoint]{key}  Same, with a pinpoint appended after "at"
+%%                          For cases: pinpoint as "para 32" or "paras 27-31"
+%%                          For books/articles: pinpoint as "p 42" or "pp 5-7"
+%%
+%% IN-TEXT REFERENCES (no footnote generated):
+%%
+%%   \legalname{key}    Case/legislation → italicised full name
+%%                      Book/article     → short form
+%%   \legalshort{key}   Short form for any source type
+%%
+%% BIBLIOGRAPHY:
+%%
+%%   \printlegalbibliography
+%%     Prints all declared sources organised as:
+%%       Legislation / Case Law / Secondary Sources (Monographs / Articles)
+%%     Sources print in the order they were declared.
+%%     IMPORTANT: declare sources in alphabetical order to comply with COAL.
+%%
+%% ════════════════════════════════════════════════════════════════════════════
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{legalcite}[2025/01/01 v1.1 Canadian McGill Guide Legal Citations]
+
+\RequirePackage{xparse}    % Advanced command definitions
+\RequirePackage{etoolbox}  % List management, conditionals
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% INTERNAL STATE
+%% ════════════════════════════════════════════════════════════════════════════
+
+% Key of the most recently cited source (used for ibid detection)
+\def\legal@lastkey{}
+
+% etoolbox list of keys that have been cited at least once
+\def\legal@citedkeys{}
+
+% Bibliography category lists (etoolbox lists of declared keys)
+\def\legal@leglist{}
+\def\legal@caselist{}
+\def\legal@booklist{}
+\def\legal@artlist{}
+
+% Bibliography category flags (set to true when first source of that type declared)
+\newif\if@legal@hasleg    \@legal@haslegfalse
+\newif\if@legal@hascases  \@legal@hascasesfalse
+\newif\if@legal@hasbooks  \@legal@hasbooksfalse
+\newif\if@legal@hasarts   \@legal@hasartsfalse
+
+% Type dispatch constants (used with \ifx for type comparisons)
+\def\legal@T@case{case}
+\def\legal@T@book{book}
+\def\legal@T@article{article}
+\def\legal@T@legislation{legislation}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% SOURCE DECLARATIONS
+%% ════════════════════════════════════════════════════════════════════════════
+
+%% \declarecase{key}{Full Case Name}{Citation}{Short}
+%% e.g. \declarecase{york}{York University v ...}{2021 SCC 32}{York}
+\NewDocumentCommand{\declarecase}{m m m m}{%
+  \expandafter\gdef\csname legal@type@#1\endcsname{case}%
+  \expandafter\gdef\csname legal@name@#1\endcsname{#2}%
+  \expandafter\gdef\csname legal@cit@#1\endcsname{#3}%
+  \expandafter\gdef\csname legal@short@#1\endcsname{#4}%
+  \listgadd\legal@caselist{#1}%
+  \@legal@hascasestrue
+}
+
+%% \declarebook{key}{FnAuthor}{BibAuthor}{Title}{Edition}{Publisher}{Year}{Short}
+%% Use {} for Edition when citing the first edition.
+\NewDocumentCommand{\declarebook}{m m m m m m m m}{%
+  \expandafter\gdef\csname legal@type@#1\endcsname{book}%
+  \expandafter\gdef\csname legal@fnauthor@#1\endcsname{#2}%
+  \expandafter\gdef\csname legal@bibauthor@#1\endcsname{#3}%
+  \expandafter\gdef\csname legal@title@#1\endcsname{#4}%
+  \expandafter\gdef\csname legal@edition@#1\endcsname{#5}%
+  \expandafter\gdef\csname legal@publisher@#1\endcsname{#6}%
+  \expandafter\gdef\csname legal@year@#1\endcsname{#7}%
+  \expandafter\gdef\csname legal@short@#1\endcsname{#8}%
+  \listgadd\legal@booklist{#1}%
+  \@legal@hasbookstrue
+}
+
+%% \declarearticle{key}{FnAuthor}{BibAuthor}{Title}{Year}{Vol:Issue}{Journal}[FirstPage]{Short}
+%% [FirstPage] is optional (McGill Guide §6.1 requires it when available).
+\NewDocumentCommand{\declarearticle}{m m m m m m m O{} m}{%
+  \expandafter\gdef\csname legal@type@#1\endcsname{article}%
+  \expandafter\gdef\csname legal@fnauthor@#1\endcsname{#2}%
+  \expandafter\gdef\csname legal@bibauthor@#1\endcsname{#3}%
+  \expandafter\gdef\csname legal@title@#1\endcsname{#4}%
+  \expandafter\gdef\csname legal@year@#1\endcsname{#5}%
+  \expandafter\gdef\csname legal@volissue@#1\endcsname{#6}%
+  \expandafter\gdef\csname legal@journal@#1\endcsname{#7}%
+  \expandafter\gdef\csname legal@firstpage@#1\endcsname{#8}%
+  \expandafter\gdef\csname legal@short@#1\endcsname{#9}%
+  \listgadd\legal@artlist{#1}%
+  \@legal@hasartstrue
+}
+
+%% \declarelegislation{key}{Full Act Title}{Statute Citation}
+%% e.g. \declarelegislation{copyrightact}{Copyright Act}{RSC 1985, c C-42}
+\NewDocumentCommand{\declarelegislation}{m m m}{%
+  \expandafter\gdef\csname legal@type@#1\endcsname{legislation}%
+  \expandafter\gdef\csname legal@name@#1\endcsname{#2}%
+  \expandafter\gdef\csname legal@cit@#1\endcsname{#3}%
+  \expandafter\gdef\csname legal@short@#1\endcsname{#2}% short form = full title
+  \listgadd\legal@leglist{#1}%
+  \@legal@haslegtrue
+}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% INTERNAL FOOTNOTE FORMATTERS
+%% ════════════════════════════════════════════════════════════════════════════
+%% Each formatter takes two arguments: #1 = key, #2 = pinpoint (may be empty).
+
+%% Case — full: Case Name, Year Court Docket at pinpoint [Short]
+%% McGill Guide §3.5: the short form for a case is italicised in brackets.
+\newcommand{\legal@fullcase}[2]{%
+  \textit{\csname legal@name@#1\endcsname},
+  \csname legal@cit@#1\endcsname%
+  \ifx#2\empty\else\ at #2\fi%
+  \ [\textit{\csname legal@short@#1\endcsname}]%
+}
+
+%% Book — full: Author, Title, edition (Publisher, Year) at pinpoint [Short]
+\newcommand{\legal@fullbook}[2]{%
+  \csname legal@fnauthor@#1\endcsname,
+  \textit{\csname legal@title@#1\endcsname}%
+  \ifcsvoid{legal@edition@#1}{}{, \csname legal@edition@#1\endcsname}%
+  \ (\csname legal@publisher@#1\endcsname, \csname legal@year@#1\endcsname)%
+  \ifx#2\empty\else\ at #2\fi%
+  \ [\csname legal@short@#1\endcsname]%
+}
+
+%% Article — full: Author, "Title" (Year) Vol:Issue Journal FirstPage at pinpoint [Short]
+%% McGill Guide §6.1: first page of article follows the journal name.
+\newcommand{\legal@fullarticle}[2]{%
+  \csname legal@fnauthor@#1\endcsname,
+  ``\csname legal@title@#1\endcsname''
+  (\csname legal@year@#1\endcsname)
+  \csname legal@volissue@#1\endcsname\
+  \textit{\csname legal@journal@#1\endcsname}%
+  \ifcsvoid{legal@firstpage@#1}{}{ \csname legal@firstpage@#1\endcsname}%
+  \ifx#2\empty\else\ at #2\fi%
+  \ [\csname legal@short@#1\endcsname]%
+}
+
+%% Legislation — full: Act Title, Statute Citation at pinpoint
+\newcommand{\legal@fullleg}[2]{%
+  \textit{\csname legal@name@#1\endcsname},
+  \csname legal@cit@#1\endcsname%
+  \ifx#2\empty\else\ at #2\fi%
+}
+
+%% Short form (for repeated non-ibid citations): Short at pinpoint
+%% McGill Guide §3.5: case short forms remain italicised in subsequent footnotes.
+\newcommand{\legal@shortfn}[2]{%
+  \edef\legal@stype{\csname legal@type@#1\endcsname}%
+  \ifx\legal@stype\legal@T@case
+    \textit{\csname legal@short@#1\endcsname}%
+  \else
+    \csname legal@short@#1\endcsname%
+  \fi
+  \ifx#2\empty\else\ at #2\fi%
+}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% INTERNAL BIBLIOGRAPHY FORMATTERS
+%% ════════════════════════════════════════════════════════════════════════════
+%% Each formatter takes one argument: #1 = key. No pinpoint or [Short] included.
+
+%% Case bibliography entry: Case Name, Citation.
+\newcommand{\legal@formatcase}[1]{%
+  \textit{\csname legal@name@#1\endcsname},
+  \csname legal@cit@#1\endcsname.%
+}
+
+%% Legislation bibliography entry: Act Title, Citation.
+\newcommand{\legal@formatleg}[1]{%
+  \textit{\csname legal@name@#1\endcsname},
+  \csname legal@cit@#1\endcsname.%
+}
+
+%% Book bibliography entry: BibAuthor, Title, edition (Publisher, Year).
+\newcommand{\legal@formatbook}[1]{%
+  \csname legal@bibauthor@#1\endcsname,
+  \textit{\csname legal@title@#1\endcsname}%
+  \ifcsvoid{legal@edition@#1}{}{, \csname legal@edition@#1\endcsname}%
+  \ (\csname legal@publisher@#1\endcsname, \csname legal@year@#1\endcsname).%
+}
+
+%% Article bibliography entry: BibAuthor, "Title" (Year) Vol:Issue Journal FirstPage.
+\newcommand{\legal@formatart}[1]{%
+  \csname legal@bibauthor@#1\endcsname,
+  ``\csname legal@title@#1\endcsname''
+  (\csname legal@year@#1\endcsname)
+  \csname legal@volissue@#1\endcsname\
+  \textit{\csname legal@journal@#1\endcsname}%
+  \ifcsvoid{legal@firstpage@#1}{}{ \csname legal@firstpage@#1\endcsname}%
+  .%
+}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% MAIN CITATION COMMAND: \legal[pinpoint]{key}
+%% ════════════════════════════════════════════════════════════════════════════
+
+\NewDocumentCommand{\legal}{o m}{%
+  % Resolve pinpoint: \legal@pin is empty-def or text-def.
+  % The formatters test \ifx#2\empty so the *meaning* (not name) is compared.
+  \IfNoValueTF{#1}{\def\legal@pin{}}{\def\legal@pin{#1}}%
+  %
+  % Guard: check that the key has been declared
+  \ifcsundef{legal@type@#2}{%
+    \PackageError{legalcite}{Citation key `#2' is not declared.
+      Use \string\declarecase, \string\declarebook,
+      \string\declarearticle, or \string\declarelegislation
+      in the preamble}{}%
+  }{%
+    % Determine if ibid: compare current key with last cited key
+    \def\legal@current{#2}%
+    \ifx\legal@current\legal@lastkey
+      %% ── IBID ─────────────────────────────────────────────────────────────
+      \footnote{\textit{Ibid}\ifx\legal@pin\empty\else\ at \legal@pin\fi.}%
+    \else
+      %% ── NOT IBID ─────────────────────────────────────────────────────────
+      \xifinlist{#2}{\legal@citedkeys}{%
+        %% Short form (previously cited, not consecutive)
+        \footnote{\legal@shortfn{#2}{\legal@pin}.}%
+      }{%
+        %% Full form (first citation of this source)
+        %% Dispatch on source type
+        \edef\legal@thetype{\csname legal@type@#2\endcsname}%
+        \ifx\legal@thetype\legal@T@case
+          \footnote{\legal@fullcase{#2}{\legal@pin}.}%
+        \else
+          \ifx\legal@thetype\legal@T@book
+            \footnote{\legal@fullbook{#2}{\legal@pin}.}%
+          \else
+            \ifx\legal@thetype\legal@T@article
+              \footnote{\legal@fullarticle{#2}{\legal@pin}.}%
+            \else
+              \ifx\legal@thetype\legal@T@legislation
+                \footnote{\legal@fullleg{#2}{\legal@pin}.}%
+              \fi
+            \fi
+          \fi
+        \fi
+        % Mark this key as having been cited
+        \listgadd\legal@citedkeys{#2}%
+      }%
+    \fi
+    % Update the last-cited key (global so it persists across groups)
+    \gdef\legal@lastkey{#2}%
+  }%
+}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% IN-TEXT REFERENCE COMMANDS (no footnote generated)
+%% ════════════════════════════════════════════════════════════════════════════
+
+%% \legalname{key}
+%% Cases and legislation → italicised full name
+%% Books and articles   → short form
+\NewDocumentCommand{\legalname}{m}{%
+  \edef\legal@thetype{\csname legal@type@#1\endcsname}%
+  \ifx\legal@thetype\legal@T@case
+    \textit{\csname legal@name@#1\endcsname}%
+  \else
+    \ifx\legal@thetype\legal@T@legislation
+      \textit{\csname legal@name@#1\endcsname}%
+    \else
+      \csname legal@short@#1\endcsname%
+    \fi
+  \fi
+}
+
+%% \legalshort{key} — short form for any source type
+%% McGill Guide §3.5: case short forms are italicised in running text.
+\NewDocumentCommand{\legalshort}{m}{%
+  \edef\legal@thetype{\csname legal@type@#1\endcsname}%
+  \ifx\legal@thetype\legal@T@case
+    \textit{\csname legal@short@#1\endcsname}%
+  \else
+    \csname legal@short@#1\endcsname%
+  \fi
+}
+
+%% ════════════════════════════════════════════════════════════════════════════
+%% BIBLIOGRAPHY / TABLE OF AUTHORITIES
+%% ════════════════════════════════════════════════════════════════════════════
+
+%% Internal: hanging-indent list environment for bibliography entries
+\newenvironment{legal@biblist}{%
+  \begin{list}{}{%
+    \setlength{\leftmargin}{1.5em}%
+    \setlength{\itemindent}{-1.5em}%
+    \setlength{\itemsep}{3pt}%
+    \setlength{\parsep}{0pt}%
+    \setlength{\topsep}{4pt}%
+  }%
+}{%
+  \end{list}%
+}
+
+%% Internal: print helpers — called by \forlistloop
+\newcommand{\legal@printcaseitem}[1]{\item \legal@formatcase{#1}}
+\newcommand{\legal@printlegitem}[1]{\item \legal@formatleg{#1}}
+\newcommand{\legal@printbookitem}[1]{\item \legal@formatbook{#1}}
+\newcommand{\legal@printartitem}[1]{\item \legal@formatart{#1}}
+
+%% \printlegalbibliography
+%% Prints all declared sources organised by:
+%%   Legislation → Case Law → Secondary Sources (Monographs / Articles)
+%% Sources appear in declaration order within each category.
+%% Declare them in alphabetical order to comply with COAL guidelines.
+\newcommand{\printlegalbibliography}{%
+  \section*{Bibliography}%
+  %
+  %% — Legislation ————————————————————————————————————————————————————————
+  \if@legal@hasleg
+    \subsection*{Legislation}%
+    \begin{legal@biblist}%
+      \forlistloop{\legal@printlegitem}{\legal@leglist}%
+    \end{legal@biblist}%
+  \fi
+  %
+  %% — Case Law ————————————————————————————————————————————————————————————
+  \if@legal@hascases
+    \subsection*{Case Law}%
+    \begin{legal@biblist}%
+      \forlistloop{\legal@printcaseitem}{\legal@caselist}%
+    \end{legal@biblist}%
+  \fi
+  %
+  %% — Secondary Sources ——————————————————————————————————————————————————
+  \if@legal@hasbooks
+    \subsection*{Monographs}%
+    \begin{legal@biblist}%
+      \forlistloop{\legal@printbookitem}{\legal@booklist}%
+    \end{legal@biblist}%
+  \fi
+  \if@legal@hasarts
+    \subsection*{Articles}%
+    \begin{legal@biblist}%
+      \forlistloop{\legal@printartitem}{\legal@artlist}%
+    \end{legal@biblist}%
+  \fi
+}
