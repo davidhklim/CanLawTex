@@ -38,6 +38,21 @@
 %%   Example:
 %%     \declarelegislation{copyrightact}{Copyright Act}{RSC 1985, c C-42}
 %%
+%%   \declarereport{key}{Author}{Title}{Institution/Publisher}{Year}{Short}
+%%   Example:
+%%     \declarereport{bureauai}
+%%       {Competition Bureau Canada}
+%%       {Big Data and Innovation: Key Themes for Competition Policy in Canada}
+%%       {Government of Canada}{2017}{Bureau Big Data}
+%%
+%%   \declareonline{key}{Author}{Title}{Website}{Date}{URL}{Short}
+%%   Example:
+%%     \declareonline{vestager2024}
+%%       {M. Vestager}
+%%       {Competition in a Digital Age}
+%%       {European Commission}{2024}
+%%       {https://ec.europa.eu/competition/digital-age}{Vestager}
+%%
 %% ════════════════════════════════════════════════════════════════════════════
 %%
 %% CITATION COMMANDS (body — each produces a footnote):
@@ -70,6 +85,7 @@
 
 \RequirePackage{xparse}    % Advanced command definitions
 \RequirePackage{etoolbox}  % List management, conditionals
+\RequirePackage{url}       % \url command for online sources
 
 %% ════════════════════════════════════════════════════════════════════════════
 %% INTERNAL STATE
@@ -157,6 +173,45 @@
 }
 
 %% ════════════════════════════════════════════════════════════════════════════
+%% ADDITIONAL SOURCE TYPES (for SJD thesis)
+%% ════════════════════════════════════════════════════════════════════════════
+
+%% \declarereport{key}{Author}{Title}{Institution/Publisher}{Year}{Short}
+%% For: government reports, Bureau guidelines, OECD papers, policy submissions.
+%% McGill Guide §6.14 (government documents) / §6.21 (international materials).
+\newif\if@legal@hasreports \@legal@hasreportsfalse
+\def\legal@reportlist{}
+\def\legal@T@report{report}
+\NewDocumentCommand{\declarereport}{m m m m m m}{%
+  \expandafter\gdef\csname legal@type@#1\endcsname{report}%
+  \expandafter\gdef\csname legal@fnauthor@#1\endcsname{#2}%
+  \expandafter\gdef\csname legal@title@#1\endcsname{#3}%
+  \expandafter\gdef\csname legal@publisher@#1\endcsname{#4}%
+  \expandafter\gdef\csname legal@year@#1\endcsname{#5}%
+  \expandafter\gdef\csname legal@short@#1\endcsname{#6}%
+  \listgadd\legal@reportlist{#1}%
+  \@legal@hasreportstrue
+}
+
+%% \declareonline{key}{Author}{Title}{Website/Source}{Date}{URL}{Short}
+%% For: news articles, blog posts, online commentary.
+%% McGill Guide §6.19 (online sources).
+\newif\if@legal@hasonline \@legal@hasonlinefalse
+\def\legal@onlinelist{}
+\def\legal@T@online{online}
+\NewDocumentCommand{\declareonline}{m m m m m m m}{%
+  \expandafter\gdef\csname legal@type@#1\endcsname{online}%
+  \expandafter\gdef\csname legal@fnauthor@#1\endcsname{#2}%
+  \expandafter\gdef\csname legal@title@#1\endcsname{#3}%
+  \expandafter\gdef\csname legal@publisher@#1\endcsname{#4}%
+  \expandafter\gdef\csname legal@year@#1\endcsname{#5}%
+  \expandafter\gdef\csname legal@url@#1\endcsname{#6}%
+  \expandafter\gdef\csname legal@short@#1\endcsname{#7}%
+  \listgadd\legal@onlinelist{#1}%
+  \@legal@hasonlinetrue
+}
+
+%% ════════════════════════════════════════════════════════════════════════════
 %% INTERNAL FOOTNOTE FORMATTERS
 %% ════════════════════════════════════════════════════════════════════════════
 %% Each formatter takes two arguments: #1 = key, #2 = pinpoint (may be empty).
@@ -198,6 +253,28 @@
   \textit{\csname legal@name@#1\endcsname},
   \csname legal@cit@#1\endcsname%
   \ifx#2\empty\else\ at #2\fi%
+}
+
+%% Report — full: Author, Title (Institution, Year) at pinpoint [Short]
+%% McGill Guide §6.14: government documents / §6.21: international materials.
+\newcommand{\legal@fullreport}[2]{%
+  \csname legal@fnauthor@#1\endcsname,
+  \textit{\csname legal@title@#1\endcsname}%
+  \ (\csname legal@publisher@#1\endcsname, \csname legal@year@#1\endcsname)%
+  \ifx#2\empty\else\ at #2\fi%
+  \ [\csname legal@short@#1\endcsname]%
+}
+
+%% Online — full: Author, "Title" (Date), online: Source <URL> [Short]
+%% McGill Guide §6.19: online sources.
+\newcommand{\legal@fullonline}[2]{%
+  \csname legal@fnauthor@#1\endcsname,
+  ``\csname legal@title@#1\endcsname''
+  (\csname legal@year@#1\endcsname),
+  online: \textit{\csname legal@publisher@#1\endcsname}
+  $\langle$\url{\csname legal@url@#1\endcsname}$\rangle$%
+  \ifx#2\empty\else\ at #2\fi%
+  \ [\csname legal@short@#1\endcsname]%
 }
 
 %% Short form (for repeated non-ibid citations): Short at pinpoint
@@ -248,6 +325,22 @@
   .%
 }
 
+%% Report bibliography entry: Author, Title (Institution, Year).
+\newcommand{\legal@formatreport}[1]{%
+  \csname legal@fnauthor@#1\endcsname,
+  \textit{\csname legal@title@#1\endcsname}%
+  \ (\csname legal@publisher@#1\endcsname, \csname legal@year@#1\endcsname).%
+}
+
+%% Online bibliography entry: Author, "Title" (Date), online: Source <URL>.
+\newcommand{\legal@formatonline}[1]{%
+  \csname legal@fnauthor@#1\endcsname,
+  ``\csname legal@title@#1\endcsname''
+  (\csname legal@year@#1\endcsname),
+  online: \textit{\csname legal@publisher@#1\endcsname}
+  $\langle$\url{\csname legal@url@#1\endcsname}$\rangle$.%
+}
+
 %% ════════════════════════════════════════════════════════════════════════════
 %% MAIN CITATION COMMAND: \legal[pinpoint]{key}
 %% ════════════════════════════════════════════════════════════════════════════
@@ -261,7 +354,8 @@
   \ifcsundef{legal@type@#2}{%
     \PackageError{legalcite}{Citation key `#2' is not declared.
       Use \string\declarecase, \string\declarebook,
-      \string\declarearticle, or \string\declarelegislation
+      \string\declarearticle, \string\declarelegislation,
+      \string\declarereport, or \string\declareonline
       in the preamble}{}%
   }{%
     % Determine if ibid: compare current key with last cited key
@@ -289,6 +383,14 @@
             \else
               \ifx\legal@thetype\legal@T@legislation
                 \footnote{\legal@fullleg{#2}{\legal@pin}.}%
+              \else
+                \ifx\legal@thetype\legal@T@report
+                  \footnote{\legal@fullreport{#2}{\legal@pin}.}%
+                \else
+                  \ifx\legal@thetype\legal@T@online
+                    \footnote{\legal@fullonline{#2}{\legal@pin}.}%
+                  \fi
+                \fi
               \fi
             \fi
           \fi
@@ -355,6 +457,8 @@
 \newcommand{\legal@printlegitem}[1]{\item \legal@formatleg{#1}}
 \newcommand{\legal@printbookitem}[1]{\item \legal@formatbook{#1}}
 \newcommand{\legal@printartitem}[1]{\item \legal@formatart{#1}}
+\newcommand{\legal@printreportitem}[1]{\item \legal@formatreport{#1}}
+\newcommand{\legal@printonlineitem}[1]{\item \legal@formatonline{#1}}
 
 %% \printlegalbibliography
 %% Prints all declared sources organised by:
@@ -391,6 +495,22 @@
     \subsection*{Articles}%
     \begin{legal@biblist}%
       \forlistloop{\legal@printartitem}{\legal@artlist}%
+    \end{legal@biblist}%
+  \fi
+  %
+  %% — Government Documents & Reports ————————————————————————————————————
+  \if@legal@hasreports
+    \subsection*{Government Documents \& Reports}%
+    \begin{legal@biblist}%
+      \forlistloop{\legal@printreportitem}{\legal@reportlist}%
+    \end{legal@biblist}%
+  \fi
+  %
+  %% — Online Sources ————————————————————————————————————————————————————
+  \if@legal@hasonline
+    \subsection*{Online Sources}%
+    \begin{legal@biblist}%
+      \forlistloop{\legal@printonlineitem}{\legal@onlinelist}%
     \end{legal@biblist}%
   \fi
 }

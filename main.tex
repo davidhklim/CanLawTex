@@ -12,6 +12,18 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{setspace}         % Line spacing: \doublespacing or \onehalfspacing
 \usepackage[bottom,flushmargin]{footmisc} % Footnotes pinned to bottom, flush left
+
+%% Footnote format: plain "N." label, tab, hanging indent.
+%% Layout:  [1em] N.  [3em] Citation text on first line...
+%%          [1em] continuation wraps to number column (first line is further right).
+\makeatletter
+\renewcommand{\@makefntext}[1]{%
+  \setlength{\leftskip}{1em}%                  continuation at number column
+  \noindent
+  \makebox[2em][l]{\normalfont\@thefnmark.}%  "N." in a fixed 2em label box
+  #1%
+}
+\makeatother
 \usepackage{hyperref}
 \hypersetup{
   colorlinks = true,
@@ -61,12 +73,11 @@
 
 \begin{document}
 
-\title{Competition Law as a lever for AI regulation}
-\author{David Lim}
+\title{The Synthetic Leviathan: Leveraging Canadian Competition Law as a Primary Regulatory Proxy for Artificial Intelligence in the Post-AIDA Vacuum}
+\author{David Lim\\[0.5em]\normalsize Doctor of Juridical Science (SJD)}
 \date{\today}
 \maketitle
 \thispagestyle{empty}  % suppress page number on title page
-\newpage
 
 \onehalfspacing  % remove or replace with \doublespacing as required
 
@@ -75,12 +86,7 @@
 %% ════════════════════════════════════════════════════════════════════════════
 
 \begin{abstract}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+\noindent The collapse of the Artificial Intelligence and Data Act (AIDA) in January 2025 left Canada without dedicated federal AI legislation, creating a regulatory vacuum in which increasingly powerful generative AI systems operate without purpose-built oversight. This thesis argues that Canada's \textit{Competition Act}, as substantially reformed in the 2022--2024 amendment cycle, is not merely a fallback instrument for AI governance but a structurally appropriate ``first-responder'' mechanism --- a ``pneumatic buffer'' --- capable of disciplining AI-specific competitive harms during the legislative interregnum. Drawing on forty-two primary sources spanning Canadian case law, Competition Bureau enforcement guidelines, OECD policy analyses, and comparative regulatory frameworks, the thesis develops a taxonomy of AI competitive harms reachable under existing law: algorithmic hub-and-spoke collusion (s.~45), reverse acqui-hires and killer acquisitions (s.~92), vertical foreclosure and layered dominance (s.~79), and deceptive AI interfaces (s.~74). It proposes five doctrinal innovations --- algorithmic hub-and-spoke liability, portfolio dominance, tiered essential-facilities analysis for data, the s.~74--79 bridge, and aggressive preventive merger review --- that require creative interpretation but no legislative amendment. Situating Canada's competition-first approach against the EU's ex-ante risk classification, the US's innovation-first ex-post enforcement, and China's strategic asymmetry model, the thesis argues that Canada's institutional advantages --- doctrinal clarity, enforcement consistency, and the flexibility of adjudicated standards --- position it to lead globally in principled, neutral competition enforcement in AI markets.
 \end{abstract}
 
 \newpage

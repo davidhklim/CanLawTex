@@ -1,0 +1,570 @@
+\documentclass[12pt, letterpaper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{array}         % >{} column prefix syntax
+\usepackage{longtable}     % tables spanning multiple pages
+\usepackage{booktabs}      % \toprule, \midrule, \bottomrule
+\usepackage{titlesec}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = black,
+  citecolor  = black,
+  urlcolor   = blue,
+}
+
+%% Section style
+\titleformat{\section}{\normalfont\large\bfseries}{}{0em}{}[\vspace{-4pt}\rule{\linewidth}{0.6pt}]
+\titleformat{\subsection}{\normalfont\normalsize\bfseries\itshape}{}{0em}{}
+
+%% Reusable column types for tables
+\newcolumntype{C}{>{\small\raggedright\arraybackslash}p{2.4in}}  % Case name
+\newcolumntype{I}{>{\small\raggedright\arraybackslash}p{1.4in}}  % Citation / Year
+\newcolumntype{D}{>{\small\raggedright\arraybackslash}p{1.8in}}  % Description
+\newcolumntype{T}{>{\small\centering\arraybackslash}p{0.4in}}    % Type
+
+%% Table header macro
+\newcommand{\casehead}{%
+  \toprule
+  \textbf{Case} & \textbf{Citation / Year} & \textbf{Description} & \textbf{Type} \\
+  \midrule
+}
+\newcommand{\casecont}{%
+  \multicolumn{4}{l}{\small\textit{(continued)}} \\
+  \toprule
+  \textbf{Case} & \textbf{Citation / Year} & \textbf{Description} & \textbf{Type} \\
+  \midrule
+}
+
+%% Type legend box
+\newcommand{\typelegend}{%
+  \smallskip
+  \noindent{\footnotesize
+  \textbf{Type key:}\quad
+  C = Competition / antitrust challenge\quad
+  D = Data / privacy / regulatory\quad
+  C+D = Both}
+  \medskip
+}
+
+%% Key-note callout box
+\newmdenv[
+  linewidth=0.6pt,
+  innerleftmargin=8pt,
+  innerrightmargin=8pt,
+  innertopmargin=6pt,
+  innerbottommargin=6pt,
+  backgroundcolor=gray!8,
+]{keynote}
+
+\begin{document}
+
+\title{\textbf{Case List}\\[0.5ex]
+\large AI, Competition Law \& Digital Markets}
+\author{David Lim}
+\date{\today}
+\maketitle
+\thispagestyle{empty}
+
+\onehalfspacing
+\tableofcontents
+\newpage
+
+%%──────────────────────────────────────────────────────────────
+\section{Canada}
+%%──────────────────────────────────────────────────────────────
+
+\subsection{Supreme Court of Canada \& Federal Court of Appeal}
+
+\typelegend
+
+\begin{longtable}{@{}CIDT@{}}
+\casehead
+\endfirsthead
+\casecont
+\endhead
+\midrule\multicolumn{4}{r}{\small\textit{continued\ldots}}\\ \endfoot
+\bottomrule\endlastfoot
+
+\textit{Canada (Commissioner of Competition) v.\ Superior Propane Inc.}
+  & [2003] FCA
+  & Merger; efficiency defence applied
+  & C \\[4pt]
+
+\textit{Tele-Direct (Publications) Inc.\ v.\ American Business Information Inc.}
+  & [1997] FCA
+  & Data-based market power defined
+  & C+D \\[4pt]
+
+\textit{Canada Pipe Co.\ v.\ Commissioner of Competition}
+  & 2006 FCA 233
+  & Loyalty rebates; anti-competitive effects
+  & C \\
+
+\end{longtable}
+
+%% ─────────────────────────────────────────────────────────────
+\subsection{Competition Tribunal --- Digital / Data / AI-Adjacent Cases}
+
+\begin{longtable}{@{}CIDT@{}}
+\casehead
+\endfirsthead
+\casecont
+\endhead
+\midrule\multicolumn{4}{r}{\small\textit{continued\ldots}}\\ \endfoot
+\bottomrule\endlastfoot
+
+\textit{Commissioner of Competition v.\ Toronto Real Estate Board (TREB)}
+  & 2017 FCA 236; CT 2016
+  & Data access; digital market abuse
+  & C+D \\[4pt]
+
+\textit{Commissioner of Competition v.\ Rogers Communications / Shaw Communications}
+  & CT-2022-002 (2022--2023)
+  & Telecom merger; digital infrastructure
+  & C \\[4pt]
+
+\textit{Commissioner of Competition v.\ The Exchange}
+  & CT-2021
+  & Payment networks; two-sided markets
+  & C \\[4pt]
+
+\textit{Commissioner of Competition v.\ Visa Inc.\ \& Mastercard International Inc.}
+  & CT-2010-010
+  & Payment platform; network effects
+  & C \\[4pt]
+
+\textit{Commissioner of Competition v.\ Facebook / Meta} (Consent Agreement)
+  & 2020
+  & Social media; data privacy overlap
+  & C+D \\[4pt]
+
+\textit{Commissioner of Competition v.\ Google LLC} (advertising investigation)
+  & Ongoing (filed 2023)
+  & Search ads; digital dominance challenged
+  & C+D \\[4pt]
+
+\textit{Commissioner of Competition v.\ Live Nation / Ticketmaster}
+  & Filed 2024
+  & Ticketing platform; digital monopoly
+  & C+D \\[4pt]
+
+\textit{Commissioner of Competition v.\ Cineplex Inc.}
+  & CT-2023-003
+  & Drip pricing; online deceptive practices
+  & C+D \\[4pt]
+
+\textit{Commissioner of Competition v.\ Amazon.com}
+  & Ongoing (2024)
+  & Marketplace listings; algorithmic pricing
+  & C+D \\[4pt]
+
+\textit{Commissioner of Competition v.\ OpenText / Micro Focus}
+  & 2023
+  & AI-software merger; data-driven enterprise
+  & C+D \\[4pt]
+
+\textit{NuComm International Inc.\ v.\ Bell Canada}
+  & 2003 FCA
+  & Essential facility; access denied
+  & C \\[4pt]
+
+\textit{Commissioner of Competition v.\ Secure Energy}
+  & CT-2022
+  & Oilfield services digital merger
+  & C \\
+
+\end{longtable}
+
+\begin{keynote}
+\textbf{Key note:} The \textit{TREB} case (2017) is the single most important Canadian case for this thesis --- it is the first Canadian competition case where control of a data platform (MLS listings) was found to be an anti-competitive abuse of dominance, directly analogous to issues arising with AI data ecosystems.
+\end{keynote}
+
+\bigskip
+
+%%──────────────────────────────────────────────────────────────
+\section{European Union}
+%%──────────────────────────────────────────────────────────────
+
+\subsection{European Commission Decisions (Article 101/102 TFEU)}
+
+\begin{longtable}{@{}CIDT@{}}
+\casehead
+\endfirsthead
+\casecont
+\endhead
+\midrule\multicolumn{4}{r}{\small\textit{continued\ldots}}\\ \endfoot
+\bottomrule\endlastfoot
+
+\textit{Google Search (Shopping)}
+  & Case AT.39740 (2017)
+  & Search self-preferencing; billion-euro fine
+  & C+D \\[4pt]
+
+\textit{Google Android}
+  & Case AT.40099 (2018)
+  & Mobile OS; bundling exclusion
+  & C+D \\[4pt]
+
+\textit{Google AdSense}
+  & Case AT.40411 (2019)
+  & Search ads; exclusivity clauses
+  & C+D \\[4pt]
+
+\textit{Facebook / WhatsApp Merger}
+  & Case M.7217 (2014)
+  & Merger; data combination not assessed
+  & C+D \\[4pt]
+
+\textit{Amazon Marketplace}
+  & Case AT.40462 (2022, settled)
+  & Seller data; platform self-preferencing
+  & C+D \\[4pt]
+
+\textit{Amazon Buy Box}
+  & Case AT.40703 (2022, settled)
+  & Algorithmic ranking; buy-box bias
+  & C+D \\[4pt]
+
+\textit{Apple -- App Store} (Music Streaming / Spotify)
+  & Case AT.40437 (2024)
+  & App Store; Spotify anti-steering fine
+  & C+D \\[4pt]
+
+\textit{Apple -- App Store} (e-Books / Reading apps)
+  & Case AT.40437 (2022)
+  & In-app purchase restrictions challenged
+  & C+D \\[4pt]
+
+\textit{Apple -- iCloud/Safari} (DMA proceedings)
+  & DMA proceedings (2024)
+  & Browser/cloud default; gatekeeper obligations
+  & C+D \\[4pt]
+
+\textit{Meta -- Interoperability (Facebook Marketplace)}
+  & Case AT.40684 (2024)
+  & Facebook ads; classified ads tying
+  & C+D \\[4pt]
+
+\textit{Microsoft / LinkedIn}
+  & Case M.8124 (2016)
+  & Data merger; behavioral remedies imposed
+  & C+D \\[4pt]
+
+\textit{Microsoft / Activision Blizzard}
+  & Case M.10996 (2023, cleared with remedies)
+  & Cloud gaming; vertical foreclosure concern
+  & C+D \\[4pt]
+
+\textit{Broadcom}
+  & Case AT.40569 (2020, interim measures)
+  & Chip firm; first interim AI-adjacent
+  & C+D \\[4pt]
+
+\textit{Qualcomm} (exclusivity)
+  & Case AT.40220 (2018)
+  & Chip exclusivity; Apple payments
+  & C \\[4pt]
+
+\textit{Qualcomm} (predatory pricing)
+  & Case AT.39711 (2019)
+  & Chipset pricing; predatory conduct
+  & C \\[4pt]
+
+\textit{Intel}
+  & Case AT.37990; C-413/14\,P (ECJ 2017)
+  & Rebates; effects-based abuse review
+  & C \\[4pt]
+
+\textit{Alphabet / Google -- AdTech}
+  & Case AT.40670 (Ongoing)
+  & Ad tech stack; self-preferencing
+  & C+D \\[4pt]
+
+\textit{Bundeskartellamt v.\ Facebook} (Germany FCO)
+  & B6-22/16 (2019); upheld by BGH 2021
+  & Data harvesting; privacy as abuse
+  & C+D \\[4pt]
+
+\textit{TikTok} (DMA / DSA)
+  & DMA proceedings (2024)
+  & Minor protection; platform gatekeeper
+  & D \\[4pt]
+
+\textit{Microsoft / OpenAI} (EU Commission Review)
+  & Article 22 / DMA review (2024)
+  & AI partnership; merger evasion scrutiny
+  & C+D \\
+
+\end{longtable}
+
+%% ─────────────────────────────────────────────────────────────
+\subsection{Court of Justice of the EU (CJEU)}
+
+\begin{longtable}{@{}CIDT@{}}
+\casehead
+\endfirsthead
+\casecont
+\endhead
+\midrule\multicolumn{4}{r}{\small\textit{continued\ldots}}\\ \endfoot
+\bottomrule\endlastfoot
+
+\textit{Google Spain SL v.\ AEPD}
+  & C-131/12 (2014)
+  & Right to be forgotten online
+  & D \\[4pt]
+
+\textit{Schrems II}
+  & C-311/18 (2020)
+  & Data transfers; privacy-competition nexus
+  & D \\[4pt]
+
+\textit{Meta Platforms v.\ Bundeskartellamt}
+  & C-252/21 (2023)
+  & GDPR breach confirms market dominance
+  & C+D \\[4pt]
+
+\textit{Intel Corp.\ v.\ Commission}
+  & C-413/14\,P (2017)
+  & Effects test; abuse of dominance
+  & C \\[4pt]
+
+\textit{Streetmap EU v.\ Google}
+  & High Court UK (2016)
+  & Search self-preferencing; early digital
+  & C+D \\[4pt]
+
+\textit{Commission v.\ Google} (Shopping appeal)
+  & Case T-612/17 (GC 2021); on appeal
+  & Self-preferencing upheld at GC
+  & C+D \\
+
+\end{longtable}
+
+%%──────────────────────────────────────────────────────────────
+\section{United States}
+%%──────────────────────────────────────────────────────────────
+
+\subsection{Department of Justice (DOJ) Cases}
+
+\begin{longtable}{@{}CIDT@{}}
+\casehead
+\endfirsthead
+\casecont
+\endhead
+\midrule\multicolumn{4}{r}{\small\textit{continued\ldots}}\\ \endfoot
+\bottomrule\endlastfoot
+
+\textit{United States v.\ Google LLC} (Search)
+  & 1:20-cv-03010 (D.D.C. 2024)
+  & Search monopoly; default agreements illegal
+  & C+D \\[4pt]
+
+\textit{United States v.\ Google LLC} (Ad Tech)
+  & 1:23-cv-00108 (E.D. Va. 2025)
+  & Ad tech stack; monopoly found
+  & C+D \\[4pt]
+
+\textit{United States v.\ Apple Inc.}
+  & 2:24-cv-04055 (D.N.J. filed 2024)
+  & Smartphone monopoly; ecosystem exclusion
+  & C+D \\[4pt]
+
+\textit{United States v.\ RealPage Inc.}
+  & 1:24-cv-00710 (M.D.N.C. 2024)
+  & Algorithmic rent pricing; collusion
+  & C+D \\[4pt]
+
+\textit{United States v.\ Live Nation Entertainment}
+  & Filed 2024
+  & Ticketing monopoly; platform foreclosure
+  & C \\[4pt]
+
+\textit{United States v.\ Microsoft Corp.}
+  & 97 Civ.\ 2487 (D.D.C. 2001)
+  & Browser war; platform tying landmark
+  & C \\
+
+\end{longtable}
+
+%% ─────────────────────────────────────────────────────────────
+\subsection{Federal Trade Commission (FTC) Cases}
+
+\begin{longtable}{@{}CIDT@{}}
+\casehead
+\endfirsthead
+\casecont
+\endhead
+\midrule\multicolumn{4}{r}{\small\textit{continued\ldots}}\\ \endfoot
+\bottomrule\endlastfoot
+
+\textit{FTC v.\ Meta Platforms (Facebook)}
+  & 1:20-cv-03590 (D.D.C. ongoing)
+  & Instagram/WhatsApp; killer acquisitions challenged
+  & C+D \\[4pt]
+
+\textit{FTC v.\ Qualcomm Inc.}
+  & 5:17-cv-00220 (N.D. Cal. 2019)
+  & No-license-no-chips; FRAND abuse
+  & C \\[4pt]
+
+\textit{FTC v.\ Microsoft / Activision Blizzard}
+  & 9:23-cv-02880 (2023, FTC lost)
+  & Cloud gaming; vertical foreclosure
+  & C+D \\[4pt]
+
+\textit{FTC v.\ Amazon.com}
+  & 2:23-cv-01461 (W.D. Wash. 2023)
+  & Dark patterns; marketplace dominance
+  & C+D \\[4pt]
+
+\textit{In re: Amazon Marketplace} (FTC investigation)
+  & Ongoing (2023--)
+  & Seller data; self-preferencing probe
+  & C+D \\[4pt]
+
+\textit{FTC v.\ Facebook} (Cambridge Analytica --- consent order)
+  & 2019 consent order
+  & Data misuse; platform accountability
+  & D \\[4pt]
+
+\textit{FTC v.\ OpenAI} (generative AI investigation)
+  & Opened 2023
+  & Consumer protection; ChatGPT data
+  & D \\[4pt]
+
+\textit{In re Nvidia / Arm Holdings}
+  & FTC challenged; abandoned 2022
+  & AI chips; supply-chain dominance
+  & C+D \\
+
+\end{longtable}
+
+%% ─────────────────────────────────────────────────────────────
+\subsection{US Supreme Court --- Foundational / Relevant Precedent}
+
+\begin{longtable}{@{}CIDT@{}}
+\casehead
+\endfirsthead
+\casecont
+\endhead
+\midrule\multicolumn{4}{r}{\small\textit{continued\ldots}}\\ \endfoot
+\bottomrule\endlastfoot
+
+\textit{United States v.\ Microsoft Corp.}
+  & 253 F.3d 34 (D.C. Cir. 2001)
+  & Platform tying; digital monopolization
+  & C \\[4pt]
+
+\textit{Ohio v.\ American Express Co.}
+  & 585 U.S. 529 (2018)
+  & Two-sided markets; antitrust framework
+  & C \\[4pt]
+
+\textit{FTC v.\ Meta Platforms Inc.} (motion to dismiss)
+  & 560 F. Supp. 3d 1 (D.D.C. 2021)
+  & Market definition; social media
+  & C+D \\[4pt]
+
+\textit{Spectrum Sports v.\ McQuillan}
+  & 506 U.S. 447 (1993)
+  & Monopolization; attempt standard
+  & C \\[4pt]
+
+\textit{Verizon Communications v.\ Law Offices of Curtis Trinko}
+  & 540 U.S. 398 (2004)
+  & Refusal to deal; essential facilities
+  & C \\[4pt]
+
+\textit{Brooke Group Ltd.\ v.\ Brown \& Williamson Tobacco}
+  & 509 U.S. 209 (1993)
+  & Predatory pricing; cost-recoupment test
+  & C \\[4pt]
+
+\textit{Aspen Skiing Co.\ v.\ Aspen Highlands Skiing Corp.}
+  & 472 U.S. 585 (1985)
+  & Refusal to deal; monopoly power
+  & C \\
+
+\end{longtable}
+
+%%──────────────────────────────────────────────────────────────
+\section{Cross-Jurisdictional / Noteworthy Regulatory Proceedings}
+%%──────────────────────────────────────────────────────────────
+
+\begin{longtable}{@{} >{\small\raggedright\arraybackslash}p{2.0in}
+                      >{\small\raggedright\arraybackslash}p{1.6in}
+                      >{\small\raggedright\arraybackslash}p{1.9in}
+                      >{\small\centering\arraybackslash}p{0.4in} @{}}
+\toprule
+\textbf{Proceeding} & \textbf{Jurisdiction / Year} & \textbf{Description} & \textbf{Type} \\
+\midrule
+\endfirsthead
+\multicolumn{4}{l}{\small\textit{(continued)}} \\
+\toprule
+\textbf{Proceeding} & \textbf{Jurisdiction / Year} & \textbf{Description} & \textbf{Type} \\
+\midrule
+\endhead
+\midrule\multicolumn{4}{r}{\small\textit{continued\ldots}}\\ \endfoot
+\bottomrule\endlastfoot
+
+\textit{CMA v.\ Meta / Giphy}
+  & UK, 2022 (forced divestiture)
+  & AI-content acquisition; unwound divestiture
+  & C+D \\[4pt]
+
+\textit{CMA AI Foundation Models Market Study}
+  & UK, 2023--2024
+  & Foundation models; structural competition risk
+  & C+D \\[4pt]
+
+\textit{CMA Microsoft / OpenAI Review}
+  & UK, 2024
+  & AI partnership; minority investment reviewed
+  & C+D \\[4pt]
+
+\textit{ACCC v.\ Google} (Location Data)
+  & Australia, 2021
+  & User consent; location data deception
+  & D \\[4pt]
+
+\textit{ACCC Digital Platforms Inquiry}
+  & Australia, 2019
+  & Platforms report; competition framework
+  & C+D \\[4pt]
+
+\textit{Booking.com} (EU/national NCAs)
+  & Multiple NCAs, 2015--2019
+  & MFN clauses; parity pricing illegal
+  & C \\[4pt]
+
+\textit{Commission v.\ Intel} (rebates)
+  & ECJ C-413/14P (2017)
+  & Effects-based test; rebate abuse
+  & C \\
+
+\end{longtable}
+
+%%──────────────────────────────────────────────────────────────
+\section*{Quick Reference: Most Important Cases for Thesis}
+%%──────────────────────────────────────────────────────────────
+\addcontentsline{toc}{section}{Quick Reference: Most Important Cases for Thesis}
+
+\noindent For the specific angle of AI + competition law in Canada with EU/US comparison, the five most essential cases are:
+
+\begin{enumerate}
+  \item \textbf{\textit{TREB} (Canada, 2017)} --- Data access as a competition law issue; the closest Canadian precedent to AI data dominance.
+  \item \textbf{\textit{United States v.\ Google LLC} (Search, 2024)} --- First modern ruling that an AI-adjacent platform illegally maintained a search monopoly.
+  \item \textbf{\textit{Bundeskartellamt v.\ Facebook} / \textit{Meta v.\ Bundeskartellamt} (CJEU C-252/21, 2023)} --- Landmark data-as-dominance case; privacy breach confirms market power.
+  \item \textbf{\textit{Google Shopping} (EU, AT.39740, 2017)} --- Algorithmic self-preferencing as abuse of dominance; foundational EU digital case.
+  \item \textbf{\textit{DOJ v.\ RealPage} (2024)} --- First major US enforcement action explicitly targeting AI-driven algorithmic pricing as collusion.
+\end{enumerate}
+
+\end{document}
