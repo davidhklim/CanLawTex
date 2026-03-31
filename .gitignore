@@ -13,5 +13,10 @@
 *.lof
 *.lot
 
-# Output PDF (optional — remove this line if you want to track the PDF)
+# Local editor/build noise
+*.tmp
+*.bak
+*.swp
 
+# PDF exports are intentionally left unignored so you can choose whether to keep
+# a compiled manuscript in the repo.
